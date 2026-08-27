@@ -1,0 +1,346 @@
+"use client";
+
+import { useState } from "react";
+import { X, Plus } from "lucide-react";
+import type { BuyerAnswers, Q4Value } from "@/types/form";
+import {
+  BUDGET_FLEXIBILITY_OPTIONS,
+  BUILD_TYPE_OPTIONS,
+  BUYER_STATUS_OPTIONS,
+  EXPLORING_TYPE_OPTIONS,
+  INTENT_OPTIONS,
+  LAND_TYPE_OPTIONS,
+  PROPERTY_TYPE_OPTIONS,
+} from "@/data/options";
+import { OptionCard } from "./OptionCard";
+
+interface Props {
+  answers: BuyerAnswers;
+  update: (patch: Partial<BuyerAnswers>) => void;
+  errors: Record<string, string>;
+}
+
+const Q4_HEADINGS: Record<string, string> = {
+  buy_property: "What type of property are you looking for?",
+  build_property: "What would you like to build?",
+  buy_land: "What kind of land are you looking for?",
+  exploring: "What are you most open to exploring?",
+};
+
+const q4OptionsFor = (intent: BuyerAnswers["intent"]) => {
+  switch (intent) {
+    case "buy_property":
+      return PROPERTY_TYPE_OPTIONS;
+    case "build_property":
+      return BUILD_TYPE_OPTIONS;
+    case "buy_land":
+      return LAND_TYPE_OPTIONS;
+    case "exploring":
+      return EXPLORING_TYPE_OPTIONS;
+    default:
+      return [];
+  }
+};
+
+const formatInrDisplay = (n: number | null): string =>
+  n == null ? "" : n.toLocaleString("en-IN");
+
+const parseInrInput = (raw: string): number | null => {
+  const digits = raw.replace(/[^0-9]/g, "");
+  if (!digits) return null;
+  return Number(digits);
+};
+
+export function Screen1IntentProperty({ answers, update, errors }: Props) {
+  const [locationDraft, setLocationDraft] = useState("");
+
+  const addLocation = () => {
+    const trimmed = locationDraft.trim();
+    if (!trimmed) return;
+    if (answers.locations.includes(trimmed)) {
+      setLocationDraft("");
+      return;
+    }
+    update({ locations: [...answers.locations, trimmed] });
+    setLocationDraft("");
+  };
+
+  const removeLocation = (loc: string) => {
+    update({ locations: answers.locations.filter((l) => l !== loc) });
+  };
+
+  const setIntent = (intent: BuyerAnswers["intent"]) => {
+    // Changing Q1 invalidates any previously selected Q4 value — no stale
+    // conditional data may influence the final profile.
+    update({ intent, q4_value: null });
+  };
+
+  return (
+    <div className="space-y-12">
+      {/* Q1 */}
+      <section>
+        <h2 className="mb-1 font-serif text-[22px] text-ink">
+          What are you looking to do?
+        </h2>
+        <p className="mb-5 text-sm text-ink-faint">
+          This sets the direction for everything else.
+        </p>
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          {INTENT_OPTIONS.map((opt) => (
+            <OptionCard
+              key={opt.value}
+              label={opt.label}
+              selected={answers.intent === opt.value}
+              onSelect={() => setIntent(opt.value)}
+            />
+          ))}
+        </div>
+        {errors.intent && (
+          <p className="mt-2 text-sm text-red-700">{errors.intent}</p>
+        )}
+      </section>
+
+      {/* Q2 */}
+      <section>
+        <h2 className="mb-1 font-serif text-[22px] text-ink">Your buyer status</h2>
+        <p className="mb-5 text-sm text-ink-faint">
+          This helps frame relevant considerations later.
+        </p>
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          {BUYER_STATUS_OPTIONS.map((opt) => (
+            <OptionCard
+              key={opt.value}
+              label={opt.label}
+              selected={answers.buyer_status === opt.value}
+              onSelect={() => update({ buyer_status: opt.value })}
+            />
+          ))}
+        </div>
+        {errors.buyer_status && (
+          <p className="mt-2 text-sm text-red-700">{errors.buyer_status}</p>
+        )}
+      </section>
+
+      {/* Q3 */}
+      <section>
+        <h2 className="mb-1 font-serif text-[22px] text-ink">
+          Where would you like to be?
+        </h2>
+        <p className="mb-5 text-sm text-ink-faint">
+          Add as many locations as you like.
+        </p>
+
+        <div className="mb-3 flex gap-2">
+          <input
+            type="text"
+            value={locationDraft}
+            onChange={(e) => setLocationDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addLocation();
+              }
+            }}
+            disabled={answers.open_to_suggestions}
+            placeholder="e.g. Coorg, Karnataka"
+            aria-label="Add a location"
+            className="focus-ring w-full rounded-lg border border-line bg-canvas-raised px-3.5 py-2.5 text-[15px] placeholder:text-ink-faint/70 disabled:cursor-not-allowed disabled:opacity-40"
+          />
+          <button
+            type="button"
+            onClick={addLocation}
+            disabled={answers.open_to_suggestions || !locationDraft.trim()}
+            className="focus-ring flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-line bg-canvas-raised px-3.5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas-sunken disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Plus size={15} /> Add
+          </button>
+        </div>
+
+        {answers.locations.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {answers.locations.map((loc) => (
+              <span
+                key={loc}
+                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas-sunken py-1.5 pl-3 pr-2 text-sm text-ink"
+              >
+                {loc}
+                <button
+                  type="button"
+                  aria-label={`Remove ${loc}`}
+                  onClick={() => removeLocation(loc)}
+                  className="focus-ring rounded-full p-0.5 text-ink-faint hover:bg-line hover:text-ink"
+                >
+                  <X size={13} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        <label className="flex cursor-pointer items-center gap-2.5 text-sm text-ink/85">
+          <input
+            type="checkbox"
+            checked={answers.open_to_suggestions}
+            onChange={(e) =>
+              update({ open_to_suggestions: e.target.checked })
+            }
+            className="focus-ring h-4 w-4 rounded border-line accent-accent"
+          />
+          I&apos;m open to suggestions
+        </label>
+
+        {errors.locations && (
+          <p className="mt-2 text-sm text-red-700">{errors.locations}</p>
+        )}
+      </section>
+
+      {/* Q4 - dynamic */}
+      {answers.intent && (
+        <section>
+          <h2 className="mb-1 font-serif text-[22px] text-ink">
+            {Q4_HEADINGS[answers.intent]}
+          </h2>
+          <p className="mb-5 text-sm text-ink-faint">
+            Choose the option that fits best right now.
+          </p>
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+            {q4OptionsFor(answers.intent).map((opt) => (
+              <OptionCard
+                key={opt.value}
+                label={opt.label}
+                selected={answers.q4_value === opt.value}
+                onSelect={() => update({ q4_value: opt.value as Q4Value })}
+              />
+            ))}
+          </div>
+          {errors.q4_value && (
+            <p className="mt-2 text-sm text-red-700">{errors.q4_value}</p>
+          )}
+        </section>
+      )}
+
+      {/* Q5 - budget */}
+      <section>
+        <h2 className="mb-1 font-serif text-[22px] text-ink">Budget</h2>
+        <p className="mb-5 text-sm text-ink-faint">
+          All figures in Indian Rupees (INR).
+        </p>
+
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-faint">
+              Minimum
+            </label>
+            <div className="relative">
+              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint">
+                ₹
+              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={formatInrDisplay(answers.budget.min_inr)}
+                disabled={answers.budget.not_sure}
+                onChange={(e) =>
+                  update({
+                    budget: {
+                      ...answers.budget,
+                      min_inr: parseInrInput(e.target.value),
+                    },
+                  })
+                }
+                placeholder="1,50,00,000"
+                className="focus-ring w-full rounded-lg border border-line bg-canvas-raised py-2.5 pl-7 pr-3.5 text-[15px] tabular-nums placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-faint">
+              Maximum
+            </label>
+            <div className="relative">
+              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-faint">
+                ₹
+              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={formatInrDisplay(answers.budget.max_inr)}
+                disabled={answers.budget.not_sure}
+                onChange={(e) =>
+                  update({
+                    budget: {
+                      ...answers.budget,
+                      max_inr: parseInrInput(e.target.value),
+                    },
+                  })
+                }
+                placeholder="2,50,00,000"
+                className="focus-ring w-full rounded-lg border border-line bg-canvas-raised py-2.5 pl-7 pr-3.5 text-[15px] tabular-nums placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
+              />
+            </div>
+          </div>
+        </div>
+
+        {!answers.budget.not_sure &&
+          answers.budget.min_inr != null &&
+          answers.budget.max_inr != null && (
+            <div className="mb-4 px-0.5">
+              <div className="relative h-1.5 rounded-full bg-line-soft">
+                <div className="absolute inset-y-0 left-[15%] right-[15%] rounded-full bg-accent-soft" />
+              </div>
+            </div>
+          )}
+
+        <label className="mb-1 flex cursor-pointer items-center gap-2.5 text-sm text-ink/85">
+          <input
+            type="checkbox"
+            checked={answers.budget.not_sure}
+            onChange={(e) =>
+              update({
+                budget: {
+                  ...answers.budget,
+                  not_sure: e.target.checked,
+                  min_inr: e.target.checked ? null : answers.budget.min_inr,
+                  max_inr: e.target.checked ? null : answers.budget.max_inr,
+                },
+              })
+            }
+            className="focus-ring h-4 w-4 rounded border-line accent-accent"
+          />
+          Not sure yet
+        </label>
+
+        {(errors.budget_min || errors.budget_max || errors.budget_range) && (
+          <p className="mt-2 text-sm text-red-700">
+            {errors.budget_range || errors.budget_min || errors.budget_max}
+          </p>
+        )}
+
+        <div className="mt-6">
+          <h3 className="mb-3 text-[15px] font-medium text-ink">
+            How flexible is that budget?
+          </h3>
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            {BUDGET_FLEXIBILITY_OPTIONS.map((opt) => (
+              <OptionCard
+                key={opt.value}
+                label={opt.label}
+                selected={answers.budget.flexibility === opt.value}
+                onSelect={() =>
+                  update({
+                    budget: { ...answers.budget, flexibility: opt.value },
+                  })
+                }
+              />
+            ))}
+          </div>
+          {errors.budget_flexibility && (
+            <p className="mt-2 text-sm text-red-700">
+              {errors.budget_flexibility}
+            </p>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
