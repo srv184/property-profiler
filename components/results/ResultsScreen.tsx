@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import type { BuyerProfile } from "@/types/buyerProfile";
 import { BuyerRadar } from "./BuyerRadar";
 import { PreferenceScores } from "./PreferenceScores";
@@ -10,6 +10,7 @@ import { JsonViewer } from "./JsonViewer";
 
 interface Props {
   profile: BuyerProfile;
+  onBack: () => void;
   onStartOver: () => void;
 }
 
@@ -22,12 +23,13 @@ const CONFIDENCE_LABELS: Record<string, string> = {
   very_high: "Very high confidence",
 };
 
-export function ResultsScreen({ profile, onStartOver }: Props) {
+export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
   const [tab, setTab] = useState<Tab>("dna");
 
   return (
     <div className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
       <div className="mb-10 animate-fadeUp text-center">
+        <button type="button" onClick={onBack} className="focus-ring mb-6 inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-faint hover:bg-canvas-sunken hover:text-ink"><ArrowLeft size={15} /> Back</button>
         <span className="mb-3 inline-block text-xs font-medium uppercase tracking-[0.14em] text-ink-faint">
           Complete
         </span>

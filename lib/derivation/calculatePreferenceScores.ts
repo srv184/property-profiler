@@ -3,7 +3,7 @@ import type {
   DerivedPreferences,
   VisualPreferences,
 } from "@/types/buyerProfile";
-import { DNA_WEIGHTS } from "@/data/scoringConfig";
+import { AXIS_BASELINE, DNA_WEIGHTS } from "@/data/scoringConfig";
 import { bool, clamp01, round2 } from "./utils";
 
 const hasPriority = (answers: BuyerAnswers, p: string) =>
@@ -31,31 +31,30 @@ export const calculatePreferenceScores = (
   // --- Privacy --------------------------------------------------------------
   const noise = dealbreaker(answers, "noise");
   const heavyTraffic = dealbreaker(answers, "heavy_traffic");
+  const severityWeight = (entry: ReturnType<typeof dealbreaker>, soft: number, hard: number) =>
+    entry ? (entry.severity === "hard" ? hard : soft) : 0;
   const privacy = clamp01(
     w.privacy.priority_privacy * bool(hasPriority(answers, "privacy")) +
       w.privacy.priority_peace_and_quiet *
         bool(hasPriority(answers, "peace_and_quiet")) +
       w.privacy.visual_private_retreat * visual.private_retreat +
-      w.privacy.avoid_noise * bool(!!noise) +
-      w.privacy.avoid_heavy_traffic * bool(!!heavyTraffic)
+      severityWeight(noise, w.privacy.avoid_noise_soft, w.privacy.avoid_noise_hard) +
+      severityWeight(heavyTraffic, w.privacy.avoid_heavy_traffic_soft, w.privacy.avoid_heavy_traffic_hard)
   );
 
   // --- Accessibility (urban access) ---------------------------------------
   const farFromCity = dealbreaker(answers, "far_from_city");
-  const trafficPenaltyWeight = heavyTraffic
-    ? w.accessibility.avoid_heavy_traffic_penalty *
-      (heavyTraffic.severity === "hard" ? 1 : 0.5)
-    : 0;
+  const trafficPenaltyWeight = severityWeight(heavyTraffic, w.accessibility.avoid_heavy_traffic_soft_penalty, w.accessibility.avoid_heavy_traffic_hard_penalty);
   const urban_access = clamp01(
-    w.accessibility.priority_city_access *
+    AXIS_BASELINE.accessibility + w.accessibility.priority_city_access *
       bool(hasPriority(answers, "city_access")) +
-      w.accessibility.avoid_far_from_city * bool(!!farFromCity) -
+      severityWeight(farFromCity, w.accessibility.avoid_far_from_city_soft, w.accessibility.avoid_far_from_city_hard) -
       trafficPenaltyWeight
   );
 
   // --- Investment -----------------------------------------------------------
   const investment = clamp01(
-    w.investment.priority_rental_income *
+    AXIS_BASELINE.investment + w.investment.priority_rental_income *
       bool(hasPriority(answers, "rental_income")) +
       w.investment.priority_resale_appreciation *
         bool(hasPriority(answers, "resale_appreciation")) +
@@ -77,14 +76,14 @@ export const calculatePreferenceScores = (
   // --- Maintenance sensitivity -------------------------------------------
   const highMaintenance = dealbreaker(answers, "high_maintenance");
   const maintenance_sensitivity = clamp01(
-    w.maintenance.priority_low_maintenance *
+    AXIS_BASELINE.maintenance + w.maintenance.priority_low_maintenance *
       bool(hasPriority(answers, "low_maintenance")) +
-      w.maintenance.avoid_high_maintenance * bool(!!highMaintenance)
+      severityWeight(highMaintenance, w.maintenance.avoid_high_maintenance_soft, w.maintenance.avoid_high_maintenance_hard)
   );
 
   // --- Community -----------------------------------------------------------
   const community = clamp01(
-    w.community.priority_community * bool(hasPriority(answers, "community")) +
+    AXIS_BASELINE.community + w.community.priority_community * bool(hasPriority(answers, "community")) +
       w.community.visual_social_resort * visual.social_resort +
       w.community.purpose_family_children *
         bool(answers.purpose === "family_children") +
@@ -96,30 +95,25 @@ export const calculatePreferenceScores = (
   const hardConstraintCount = answers.dealbreakers.filter(
     (d) => d.severity === "hard" && d.type !== "none"
   ).length;
-  const fewHardConstraintsContribution =
+  const hardConstraintTerm =
     hardConstraintCount === 0
-      ? w.flexibility.few_hard_constraints
+      ? w.flexibility.zero_hard_constraints
       : hardConstraintCount === 1
-        ? w.flexibility.few_hard_constraints * 0.5
-        : 0;
+        ? w.flexibility.one_hard_constraint
+        : -w.flexibility.two_plus_hard_constraints_penalty;
   const budgetFlexContribution =
     answers.budget.flexibility === "very_flexible"
       ? w.flexibility.budget_very_flexible
       : answers.budget.flexibility === "somewhat_flexible"
         ? w.flexibility.budget_somewhat_flexible
         : 0;
-  const singleLocationPenalty =
-    answers.locations.length <= 1 && !answers.open_to_suggestions
-      ? w.flexibility.single_location_penalty
-      : 0;
-
   const flexibility = clamp01(
     w.flexibility.open_to_suggestions * bool(answers.open_to_suggestions) +
       w.flexibility.show_me_everything * bool(answers.q4_value === "all") +
       w.flexibility.budget_not_sure * bool(answers.budget.not_sure) +
       budgetFlexContribution +
-      fewHardConstraintsContribution -
-      singleLocationPenalty
+      w.flexibility.multiple_locations * bool(answers.locations.length >= 3) +
+      hardConstraintTerm
   );
 
   // --- Supplementary architecture / atmosphere signals ---------------------

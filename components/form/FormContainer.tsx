@@ -59,8 +59,13 @@ export function FormContainer() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const goBackFromResults = () => {
+    setScreen(4);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (screen === 5 && profile) {
-    return <ResultsScreen profile={profile} onStartOver={startOver} />;
+    return <ResultsScreen profile={profile} onBack={goBackFromResults} onStartOver={startOver} />;
   }
 
   return (

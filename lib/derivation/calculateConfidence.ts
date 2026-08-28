@@ -1,6 +1,6 @@
 import type { BuyerAnswers } from "@/types/form";
-import type { Confidence, VisualPreferences } from "@/types/buyerProfile";
-import { CONFIDENCE_LABEL_THRESHOLDS, CONFIDENCE_WEIGHTS } from "@/data/scoringConfig";
+import type { Confidence, DerivedPreferences, VisualPreferences } from "@/types/buyerProfile";
+import { AXIS_BASELINE, CONFIDENCE_LABEL_THRESHOLDS, CONFIDENCE_WEIGHTS } from "@/data/scoringConfig";
 import { clamp01, round2 } from "./utils";
 
 /**
@@ -9,7 +9,8 @@ import { clamp01, round2 } from "./utils";
  */
 export const calculateConfidence = (
   answers: BuyerAnswers,
-  visual: VisualPreferences
+  visual: VisualPreferences,
+  preferences: DerivedPreferences
 ): Confidence => {
   const w = CONFIDENCE_WEIGHTS;
   let score = 0;
@@ -81,6 +82,11 @@ export const calculateConfidence = (
     reasons.push("A purchase timeline was provided.");
   }
 
+  if (answers.payment_method) {
+    score += w.financing_known;
+    reasons.push("A financing approach was provided.");
+  }
+
   if (answers.intent === "exploring") {
     score -= w.penalty_exploring_intent;
     reasons.push("Overall intent is still exploratory.");
@@ -88,6 +94,17 @@ export const calculateConfidence = (
 
   if (answers.open_to_suggestions && answers.locations.length === 0) {
     score -= w.penalty_open_to_suggestions_only;
+  }
+
+  const ambiguousAxes = [
+    preferences.urban_access === AXIS_BASELINE.accessibility,
+    preferences.investment === AXIS_BASELINE.investment,
+    preferences.maintenance_sensitivity === AXIS_BASELINE.maintenance,
+    preferences.community === AXIS_BASELINE.community,
+  ].filter(Boolean).length;
+  if (ambiguousAxes > 0) {
+    score -= ambiguousAxes * w.penalty_per_ambiguous_axis;
+    reasons.push(`${ambiguousAxes} preference area${ambiguousAxes === 1 ? " remains" : "s remain"} ambiguous.`);
   }
 
   const finalScore = round2(clamp01(score));

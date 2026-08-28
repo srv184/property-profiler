@@ -57,7 +57,7 @@ export const deriveBuyerProfile = (answers: BuyerAnswers): BuyerProfile => {
   const buyer_dna = calculateDnaScores(derived_preferences);
 
   // 14. Recommendation confidence.
-  const confidence = calculateConfidence(answers, visual_preferences);
+  const confidence = calculateConfidence(answers, visual_preferences, derived_preferences);
 
   // 15. Human readable summaries.
   const summary = generateSummaries(

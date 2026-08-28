@@ -43,3 +43,7 @@ body {
   background-color: #e6e1d6;
   border-radius: 999px;
 }
+
+.budget-range { pointer-events: none; }
+.budget-range::-webkit-slider-thumb { appearance: none; height: 18px; width: 18px; border-radius: 999px; background: #8a6a3f; cursor: pointer; pointer-events: auto; }
+.budget-range::-moz-range-thumb { height: 18px; width: 18px; border: 0; border-radius: 999px; background: #8a6a3f; cursor: pointer; pointer-events: auto; }

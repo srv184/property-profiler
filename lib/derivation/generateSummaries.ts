@@ -15,17 +15,12 @@ import {
   USAGE_OPTIONS,
 } from "@/data/options";
 import { scoreLabel } from "./utils";
+import { formatInr } from "@/utils/formatCurrency";
 
 const labelFor = <T extends string>(
   options: { value: T; label: string }[],
   value: T | null | undefined
 ): string | null => options.find((o) => o.value === value)?.label ?? null;
-
-const formatInr = (n: number): string => {
-  if (n >= 10000000) return `₹${(n / 10000000).toFixed(n % 10000000 === 0 ? 0 : 1)} Cr`;
-  if (n >= 100000) return `₹${(n / 100000).toFixed(n % 100000 === 0 ? 0 : 1)} L`;
-  return `₹${n.toLocaleString("en-IN")}`;
-};
 
 // ---------------------------------------------------------------------------
 // Lifestyle summary — combines the strongest atmosphere/lifestyle signals.
@@ -53,7 +48,7 @@ const generateLifestyleSummary = (p: DerivedPreferences): string => {
     clauses.push("a clear preference for privacy and seclusion");
   }
 
-  if (urbanHigh && !privacyHigh) {
+  if (urbanHigh) {
     clauses.push("a desire to stay well connected to the city");
   } else if (urbanHigh) {
     clauses.push("an appreciation for good connectivity, without wanting to give up quiet space");
@@ -217,5 +212,3 @@ export const generateSummaries = (
     buying_profile: generateBuyingProfileSummary(answers, purchaseProfile),
   };
 };
-
-export { formatInr };

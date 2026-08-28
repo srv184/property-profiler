@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { X, Plus } from "lucide-react";
+import { X } from "lucide-react";
 import type { BuyerAnswers, Q4Value } from "@/types/form";
 import {
   BUDGET_FLEXIBILITY_OPTIONS,
@@ -13,6 +12,9 @@ import {
   PROPERTY_TYPE_OPTIONS,
 } from "@/data/options";
 import { OptionCard } from "./OptionCard";
+import { LocationAutocomplete } from "./LocationAutocomplete";
+import { BudgetRangeSlider } from "./BudgetRangeSlider";
+import { formatInr } from "@/utils/formatCurrency";
 
 interface Props {
   answers: BuyerAnswers;
@@ -42,8 +44,10 @@ const q4OptionsFor = (intent: BuyerAnswers["intent"]) => {
   }
 };
 
-const formatInrDisplay = (n: number | null): string =>
-  n == null ? "" : n.toLocaleString("en-IN");
+const MIN_BUDGET = 1000000;
+const MAX_BUDGET = 500000000;
+const BUDGET_STEP = 100000;
+const formatInrDisplay = (n: number | null): string => n == null ? "" : n.toLocaleString("en-IN");
 
 const parseInrInput = (raw: string): number | null => {
   const digits = raw.replace(/[^0-9]/g, "");
@@ -52,17 +56,25 @@ const parseInrInput = (raw: string): number | null => {
 };
 
 export function Screen1IntentProperty({ answers, update, errors }: Props) {
-  const [locationDraft, setLocationDraft] = useState("");
-
-  const addLocation = () => {
-    const trimmed = locationDraft.trim();
+  const addLocation = (location: string) => {
+    const trimmed = location.trim();
     if (!trimmed) return;
-    if (answers.locations.includes(trimmed)) {
-      setLocationDraft("");
-      return;
-    }
+    if (answers.locations.includes(trimmed)) return;
     update({ locations: [...answers.locations, trimmed] });
-    setLocationDraft("");
+  };
+
+  const updateBudget = (min_inr: number | null, max_inr: number | null) => update({ budget: { ...answers.budget, min_inr, max_inr } });
+  const updateMinimum = (value: number | null) => {
+    if (value == null) return updateBudget(null, answers.budget.max_inr);
+    const min = Math.min(MAX_BUDGET, Math.max(MIN_BUDGET, value));
+    const max = Math.max(min, answers.budget.max_inr ?? min);
+    updateBudget(min, max);
+  };
+  const updateMaximum = (value: number | null) => {
+    if (value == null) return updateBudget(answers.budget.min_inr, null);
+    const max = Math.min(MAX_BUDGET, Math.max(MIN_BUDGET, value));
+    const min = Math.min(max, answers.budget.min_inr ?? max);
+    updateBudget(min, max);
   };
 
   const removeLocation = (loc: string) => {
@@ -130,31 +142,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
           Add as many locations as you like.
         </p>
 
-        <div className="mb-3 flex gap-2">
-          <input
-            type="text"
-            value={locationDraft}
-            onChange={(e) => setLocationDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addLocation();
-              }
-            }}
-            disabled={answers.open_to_suggestions}
-            placeholder="e.g. Coorg, Karnataka"
-            aria-label="Add a location"
-            className="focus-ring w-full rounded-lg border border-line bg-canvas-raised px-3.5 py-2.5 text-[15px] placeholder:text-ink-faint/70 disabled:cursor-not-allowed disabled:opacity-40"
-          />
-          <button
-            type="button"
-            onClick={addLocation}
-            disabled={answers.open_to_suggestions || !locationDraft.trim()}
-            className="focus-ring flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-line bg-canvas-raised px-3.5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-canvas-sunken disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <Plus size={15} /> Add
-          </button>
-        </div>
+        <LocationAutocomplete disabled={answers.open_to_suggestions} onAdd={addLocation} />
 
         {answers.locations.length > 0 && (
           <div className="mb-4 flex flex-wrap gap-2">
@@ -226,6 +214,8 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
           All figures in Indian Rupees (INR).
         </p>
 
+        <BudgetRangeSlider min={MIN_BUDGET} max={MAX_BUDGET} step={BUDGET_STEP} valueMin={answers.budget.min_inr ?? MIN_BUDGET} valueMax={answers.budget.max_inr ?? MAX_BUDGET} disabled={answers.budget.not_sure} onChange={updateBudget} />
+        <p className="-mt-3 mb-4 text-xs text-ink-faint">Selected range: {formatInr(answers.budget.min_inr ?? MIN_BUDGET)} – {formatInr(answers.budget.max_inr ?? MAX_BUDGET)}</p>
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-ink-faint">
@@ -240,14 +230,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
                 inputMode="numeric"
                 value={formatInrDisplay(answers.budget.min_inr)}
                 disabled={answers.budget.not_sure}
-                onChange={(e) =>
-                  update({
-                    budget: {
-                      ...answers.budget,
-                      min_inr: parseInrInput(e.target.value),
-                    },
-                  })
-                }
+                onChange={(e) => updateMinimum(parseInrInput(e.target.value))}
                 placeholder="1,50,00,000"
                 className="focus-ring w-full rounded-lg border border-line bg-canvas-raised py-2.5 pl-7 pr-3.5 text-[15px] tabular-nums placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
               />
@@ -266,30 +249,13 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
                 inputMode="numeric"
                 value={formatInrDisplay(answers.budget.max_inr)}
                 disabled={answers.budget.not_sure}
-                onChange={(e) =>
-                  update({
-                    budget: {
-                      ...answers.budget,
-                      max_inr: parseInrInput(e.target.value),
-                    },
-                  })
-                }
+                onChange={(e) => updateMaximum(parseInrInput(e.target.value))}
                 placeholder="2,50,00,000"
                 className="focus-ring w-full rounded-lg border border-line bg-canvas-raised py-2.5 pl-7 pr-3.5 text-[15px] tabular-nums placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
               />
             </div>
           </div>
         </div>
-
-        {!answers.budget.not_sure &&
-          answers.budget.min_inr != null &&
-          answers.budget.max_inr != null && (
-            <div className="mb-4 px-0.5">
-              <div className="relative h-1.5 rounded-full bg-line-soft">
-                <div className="absolute inset-y-0 left-[15%] right-[15%] rounded-full bg-accent-soft" />
-              </div>
-            </div>
-          )}
 
         <label className="mb-1 flex cursor-pointer items-center gap-2.5 text-sm text-ink/85">
           <input

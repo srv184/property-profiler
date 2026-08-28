@@ -98,7 +98,7 @@ export const calculatePropertyPreferences = (
 
   for (const type of types) {
     const isExplicitMatch = !isOpenSelection && explicitValue === type.value;
-    const base = isExplicitMatch ? 0.72 : isOpenSelection ? 0.42 : 0.14;
+    const base = isExplicitMatch ? 0.80 : isOpenSelection ? 0.45 : 0.10;
 
     let secondary = 0;
     for (const [key, contribution] of Object.entries(type.contributions)) {
@@ -107,6 +107,17 @@ export const calculatePropertyPreferences = (
     }
 
     weights[type.value] = round2(clamp01(base + secondary));
+  }
+
+  const explicitMatchKey = !isOpenSelection && types.some((type) => type.value === explicitValue)
+    ? explicitValue
+    : null;
+  if (explicitMatchKey) {
+    const explicitScore = weights[explicitMatchKey];
+    const otherMax = Math.max(0, ...Object.entries(weights)
+      .filter(([key]) => key !== explicitMatchKey)
+      .map(([, value]) => value));
+    if (otherMax >= explicitScore) weights[explicitMatchKey] = round2(clamp01(otherMax + 0.05));
   }
 
   return weights;
