@@ -2,8 +2,17 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image, { type StaticImageData } from "next/image";
 import type { BuyerAnswers, VisualChoice } from "@/types/form";
 import { VISUAL_PAIRS } from "@/data/options";
+import cityProperty from "@/app/images/city property.jpg";
+import forestHome from "@/app/images/forest home.jpg";
+import minimalArchitecture from "@/app/images/minimal architecture.jpg";
+import modernVilla from "@/app/images/modern villa.jpg";
+import mountainVilla from "@/app/images/mountain villa.jpg";
+import privateRetreat from "@/app/images/private retreat.jpg";
+import rusticCabin from "@/app/images/rustic cabin.jpg";
+import socialRetreat from "@/app/images/social retreat.jpg";
 
 interface Props {
   answers: BuyerAnswers;
@@ -16,6 +25,17 @@ const CHOICE_LABEL: Record<VisualChoice, string> = {
   B: "This one",
   both: "Both",
   neither: "Neither",
+};
+
+const VISUAL_IMAGES: Record<string, StaticImageData> = {
+  "Mountain villa": mountainVilla,
+  "Modern villa": modernVilla,
+  "Forest home": forestHome,
+  "City property": cityProperty,
+  "Private retreat": privateRetreat,
+  "Social resort": socialRetreat,
+  "Rustic cabin": rusticCabin,
+  "Minimal architecture": minimalArchitecture,
 };
 
 export function Screen3VisualPreferences({ answers, update, errors }: Props) {
@@ -33,7 +53,7 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
   const goPrev = () => setIndex((i) => Math.max(0, i - 1));
 
   return (
-    <div>
+    <div className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
       <h2 className="mb-1 font-serif text-[22px] text-ink">
         A quick visual read
       </h2>
@@ -41,7 +61,7 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
         Trust your gut — there are no right answers. {pair.question}
       </p>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {(["A", "B"] as const).map((side) => {
           const opt = side === "A" ? pair.optionA : pair.optionB;
           const selected = currentChoice === side;
@@ -53,23 +73,27 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
               aria-pressed={selected}
               className={`focus-ring group relative aspect-[4/3] overflow-hidden rounded-xl2 border-2 transition-all duration-200 ${
                 selected
-                  ? "border-accent shadow-raised"
-                  : "border-transparent hover:border-line"
+                  ? "border-accent bg-orange-50/50 shadow-raised"
+                  : "border-line shadow-sm hover:-translate-y-1 hover:border-accent/60 hover:shadow-card"
               }`}
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${opt.gradient} transition-transform duration-500 ${
+              <Image
+                src={VISUAL_IMAGES[opt.label]}
+                alt={opt.label}
+                fill
+                sizes="(min-width: 640px) 50vw, 100vw"
+                className={`object-cover transition-transform duration-500 ${
                   selected ? "scale-105" : "group-hover:scale-105"
                 }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/5 to-black/10" />
               <div className="absolute bottom-0 left-0 right-0 p-4">
-                <span className="text-[15px] font-medium text-white drop-shadow">
+                <span className="text-base font-semibold text-white drop-shadow">
                   {opt.label}
                 </span>
               </div>
               {selected && (
-                <div className="absolute right-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink shadow-card">
+                <div className="absolute right-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent-deep shadow-card">
                   Selected
                 </div>
               )}
@@ -78,7 +102,7 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
         })}
       </div>
 
-      <div className="mt-3 flex justify-center gap-2.5">
+      <div className="mt-4 flex flex-wrap justify-center gap-2.5">
         {(["both", "neither"] as const).map((choice) => (
           <button
             key={choice}
@@ -86,8 +110,8 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
             onClick={() => setChoice(choice)}
             className={`focus-ring rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
               currentChoice === choice
-                ? "border-accent bg-accent/10 text-accent-deep"
-                : "border-line bg-canvas-raised text-ink-faint hover:bg-canvas-sunken"
+                ? "border-accent bg-orange-50 text-accent-deep"
+                : "border-line bg-canvas-raised text-ink-faint hover:border-accent/50 hover:bg-orange-50/40"
             }`}
           >
             {CHOICE_LABEL[choice]}
@@ -95,7 +119,8 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
         ))}
       </div>
 
-      <div className="mt-8 flex items-center justify-between">
+      <div className="mt-8 rounded-xl bg-canvas-sunken px-3 py-2.5">
+        <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={goPrev}
@@ -115,10 +140,10 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
               onClick={() => setIndex(i)}
               className={`h-2 w-2 rounded-full transition-all ${
                 i === index
-                  ? "w-5 bg-accent"
-                  : answers.visual[p.id]
-                    ? "bg-accent-soft"
-                    : "bg-line"
+                ? "w-6 bg-accent"
+                : answers.visual[p.id]
+                  ? "bg-accent-soft"
+                  : "bg-line"
               }`}
             />
           ))}
@@ -133,6 +158,7 @@ export function Screen3VisualPreferences({ answers, update, errors }: Props) {
         >
           <ChevronRight size={20} />
         </button>
+        </div>
       </div>
 
       {errors.visual && (

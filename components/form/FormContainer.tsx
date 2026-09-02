@@ -69,7 +69,7 @@ export function FormContainer() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
+    <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-8 sm:px-8 sm:pb-16 sm:pt-12">
       <ProgressIndicator
         current={screen}
         total={TOTAL_SCREENS}
@@ -103,23 +103,25 @@ export function FormContainer() {
         )}
       </div>
 
-      <div className="mt-12 flex items-center justify-between border-t border-line pt-6">
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-line bg-canvas-raised/95 px-4 py-3 shadow-[0_-6px_20px_rgba(15,23,42,0.06)] backdrop-blur sm:static sm:mt-12 sm:flex sm:items-center sm:justify-between sm:border-t sm:bg-transparent sm:px-0 sm:pt-6 sm:shadow-none sm:backdrop-blur-none">
+        <div className="mx-auto flex w-full max-w-2xl items-center justify-between sm:contents">
         <button
           type="button"
           onClick={goBack}
           disabled={screen === 1}
-          className="focus-ring flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium text-ink-faint transition-colors hover:bg-canvas-sunken hover:text-ink disabled:cursor-not-allowed disabled:opacity-0"
+          className="focus-ring flex items-center gap-1.5 rounded-xl px-4 py-3 text-sm font-semibold text-ink-faint transition-colors hover:bg-canvas-sunken hover:text-ink disabled:cursor-not-allowed disabled:opacity-0"
         >
           <ArrowLeft size={16} /> Back
         </button>
         <button
           type="button"
           onClick={goNext}
-          className="focus-ring flex items-center gap-1.5 rounded-full bg-ink px-6 py-2.5 text-sm font-medium text-canvas transition-colors hover:bg-accent-deep"
+          className="focus-ring flex items-center gap-1.5 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-accent-deep hover:shadow-card"
         >
           {screen === TOTAL_SCREENS - 1 ? "View My Buyer DNA" : "Continue"}
           <ArrowRight size={16} />
         </button>
+        </div>
       </div>
     </div>
   );

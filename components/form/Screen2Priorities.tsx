@@ -67,17 +67,15 @@ export function Screen2Priorities({ answers, update, errors }: Props) {
   const remainingDealbreakers = MAX_DEALBREAKERS - activeDealbreakers.length;
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Q6 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <div className="mb-1 flex items-baseline justify-between">
           <h2 className="font-serif text-[22px] text-ink">
             Which 3 matter most?
           </h2>
-          <span className="text-xs font-medium text-ink-faint">
-            {remaining > 0
-              ? `${remaining} more`
-              : "3 selected"}
+          <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-accent-deep">
+            {answers.priorities.length}/3 selected
           </span>
         </div>
         <p className="mb-5 text-sm text-ink-faint">
@@ -126,7 +124,7 @@ export function Screen2Priorities({ answers, update, errors }: Props) {
       </section>
 
       {/* Q7 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <div className="mb-1 flex items-baseline justify-between">
           <h2 className="font-serif text-[22px] text-ink">
             What should we avoid?
@@ -180,7 +178,7 @@ export function Screen2Priorities({ answers, update, errors }: Props) {
                   key={d.type}
                   className="flex flex-col gap-2 rounded-lg border border-line bg-canvas-sunken/50 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <span className="text-sm text-ink">{label}</span>
+                  <span className={`text-sm font-medium ${d.severity === "hard" ? "text-red-700 line-through decoration-red-500 decoration-2" : "text-ink"}`}>{label}</span>
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -198,7 +196,7 @@ export function Screen2Priorities({ answers, update, errors }: Props) {
                       onClick={() => setSeverity(d.type, "hard")}
                       className={`focus-ring rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                         d.severity === "hard"
-                          ? "border-accent bg-accent/10 text-accent-deep"
+                          ? "border-red-500 bg-red-50 text-red-700"
                           : "border-line bg-canvas-raised text-ink-faint hover:bg-canvas-sunken"
                       }`}
                     >

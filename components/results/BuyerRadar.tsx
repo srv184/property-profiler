@@ -32,28 +32,28 @@ export function BuyerRadar({ dna }: Props) {
   }));
 
   return (
-    <div className="h-[320px] w-full sm:h-[380px]">
+    <div className="h-[300px] w-full sm:h-[380px]">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} outerRadius="72%">
-          <PolarGrid stroke="#e6e1d6" />
+          <PolarGrid stroke="#E5E7EB" />
           <PolarAngleAxis
             dataKey="axis"
-            tick={{ fill: "#3a3733", fontSize: 12.5 }}
+            tick={{ fill: "#4B5563", fontSize: 12.5 }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fill: "#726c63", fontSize: 10 }}
+            tick={{ fill: "#7E808C", fontSize: 10 }}
             tickCount={5}
             axisLine={false}
           />
           <Radar
             name="Buyer DNA"
             dataKey="value"
-            stroke="#8a6a3f"
+            stroke="#FC8019"
             strokeWidth={2}
-            fill="#8a6a3f"
-            fillOpacity={0.22}
+            fill="#FC8019"
+            fillOpacity={0.18}
           />
         </RadarChart>
       </ResponsiveContainer>

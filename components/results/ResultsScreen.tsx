@@ -27,10 +27,10 @@ export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
   const [tab, setTab] = useState<Tab>("dna");
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
+    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-8 sm:py-12">
       <div className="mb-10 animate-fadeUp text-center">
-        <button type="button" onClick={onBack} className="focus-ring mb-6 inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-faint hover:bg-canvas-sunken hover:text-ink"><ArrowLeft size={15} /> Back</button>
-        <span className="mb-3 inline-block text-xs font-medium uppercase tracking-[0.14em] text-ink-faint">
+        <button type="button" onClick={onBack} className="focus-ring mb-6 inline-flex items-center gap-1.5 rounded-xl border border-line bg-canvas-raised px-4 py-2.5 text-sm font-semibold text-ink-faint shadow-sm transition-colors hover:border-accent/40 hover:bg-orange-50/40 hover:text-ink"><ArrowLeft size={15} /> Back</button>
+        <span className="mb-3 inline-block rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-accent-deep">
           Complete
         </span>
         <h1 className="mb-2 font-serif text-[32px] leading-tight text-ink sm:text-[38px]">
@@ -42,7 +42,7 @@ export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
         </p>
       </div>
 
-      <div className="mb-8 flex items-center justify-center gap-1 rounded-full border border-line bg-canvas-raised p-1">
+      <div className="mx-auto mb-8 flex w-full max-w-md items-center justify-center gap-1 rounded-xl border border-line bg-canvas-raised p-1.5 shadow-sm">
         {(
           [
             { id: "dna", label: "Buyer DNA" },
@@ -55,8 +55,8 @@ export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
             onClick={() => setTab(t.id)}
             className={`focus-ring rounded-full px-5 py-2 text-sm font-medium transition-colors ${
               tab === t.id
-                ? "bg-ink text-canvas"
-                : "text-ink-faint hover:text-ink"
+                ? "bg-accent text-white shadow-sm"
+                : "text-ink-faint hover:bg-orange-50/60 hover:text-ink"
             }`}
           >
             {t.label}
@@ -66,17 +66,17 @@ export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
 
       {tab === "dna" && (
         <div className="animate-fadeIn space-y-10">
-          <div className="rounded-xl2 border border-line bg-canvas-raised p-5 shadow-card sm:p-8">
+          <div className="rounded-xl border border-line bg-canvas-raised p-4 shadow-sm sm:p-7">
             <BuyerRadar dna={profile.buyer_dna} />
           </div>
 
           <PreferenceScores dna={profile.buyer_dna} />
 
-          <div className="rounded-xl2 border border-line bg-canvas-raised px-6 shadow-card sm:px-8">
+          <div className="rounded-xl border border-line bg-canvas-raised px-5 shadow-sm sm:px-7">
             <ProfileSummary profile={profile} />
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-line-soft bg-canvas-sunken/50 px-5 py-3.5">
+          <div className="flex flex-col gap-2 rounded-xl border border-accent/20 bg-orange-50/40 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-sm text-ink-faint">
               Recommendation confidence
             </span>
@@ -84,7 +84,7 @@ export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
               <span className="text-sm font-medium text-ink">
                 {CONFIDENCE_LABELS[profile.confidence.label]}
               </span>
-              <span className="font-serif text-sm text-accent-deep tabular-nums">
+              <span className="font-serif text-lg font-semibold text-accent-deep tabular-nums">
                 {Math.round(profile.confidence.score * 100)}%
               </span>
             </span>
@@ -102,7 +102,7 @@ export function ResultsScreen({ profile, onBack, onStartOver }: Props) {
         <button
           type="button"
           onClick={onStartOver}
-          className="focus-ring flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-medium text-ink-faint transition-colors hover:bg-canvas-sunken hover:text-ink"
+          className="focus-ring flex items-center gap-1.5 rounded-xl border border-line bg-canvas-raised px-4 py-2.5 text-sm font-semibold text-ink-faint shadow-sm transition-colors hover:border-accent/40 hover:bg-orange-50/40 hover:text-ink"
         >
           <RotateCcw size={14} /> Start over
         </button>

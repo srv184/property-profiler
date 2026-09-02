@@ -11,23 +11,23 @@ const config: Config = {
     extend: {
       colors: {
         ink: {
-          DEFAULT: "#161513",
-          soft: "#3a3733",
-          faint: "#726c63",
+          DEFAULT: "#1F2937",
+          soft: "#4B5563",
+          faint: "#7E808C",
         },
         canvas: {
-          DEFAULT: "#faf8f4",
-          raised: "#ffffff",
-          sunken: "#f2efe8",
+          DEFAULT: "#F6F7F9",
+          raised: "#FFFFFF",
+          sunken: "#F9FAFB",
         },
         line: {
-          DEFAULT: "#e6e1d6",
-          soft: "#efece3",
+          DEFAULT: "#E5E7EB",
+          soft: "#F3F4F6",
         },
         accent: {
-          DEFAULT: "#8a6a3f",
-          soft: "#c9b48f",
-          deep: "#5b4326",
+          DEFAULT: "#FC8019",
+          soft: "#FED7AA",
+          deep: "#C2410C",
         },
       },
       fontFamily: {
@@ -41,8 +41,8 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        card: "0 1px 2px rgba(22,21,19,0.04), 0 1px 12px rgba(22,21,19,0.04)",
-        raised: "0 2px 4px rgba(22,21,19,0.06), 0 8px 24px rgba(22,21,19,0.06)",
+        card: "0 1px 2px rgba(15,23,42,0.05)",
+        raised: "0 10px 24px rgba(15,23,42,0.08)",
       },
       borderRadius: {
         xl2: "1.25rem",

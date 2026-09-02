@@ -19,7 +19,7 @@ function SummaryBlock({
     <div className="border-b border-line-soft py-6 first:pt-0 last:border-b-0">
       <div className="mb-2.5 flex items-center gap-2 text-ink">
         {icon}
-        <h3 className="font-serif text-[17px]">{title}</h3>
+        <h3 className="font-serif text-lg">{title}</h3>
       </div>
       {children}
     </div>
@@ -49,7 +49,7 @@ export function ProfileSummary({ profile }: Props) {
           {summary.top_priorities.map((p) => (
             <li
               key={p}
-              className="rounded-full border border-line bg-canvas-sunken px-3 py-1 text-sm text-ink"
+              className="rounded-full border border-accent/20 bg-orange-50/50 px-3 py-1 text-sm font-medium text-ink"
             >
               {p}
             </li>
@@ -72,7 +72,7 @@ export function ProfileSummary({ profile }: Props) {
                   {summary.avoid_hard.map((d) => (
                     <li
                       key={d}
-                      className="rounded-full border border-red-200 bg-red-50 px-3 py-1 text-sm text-red-800"
+                      className="rounded-full border border-red-300 bg-red-50 px-3 py-1 text-sm font-medium text-red-800"
                     >
                       {d}
                     </li>
@@ -89,7 +89,7 @@ export function ProfileSummary({ profile }: Props) {
                   {summary.avoid_soft.map((d) => (
                     <li
                       key={d}
-                      className="rounded-full border border-line bg-canvas-sunken px-3 py-1 text-sm text-ink"
+                      className="rounded-full border border-line bg-canvas-sunken px-3 py-1 text-sm font-medium text-ink"
                     >
                       {d}
                     </li>

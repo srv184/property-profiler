@@ -29,9 +29,9 @@ export function Screen4Context({ answers, update, errors }: Props) {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Q8 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">Your age range</h2>
         <p className="mb-5 text-sm text-ink-faint">
           This helps calibrate context, nothing more.
@@ -52,7 +52,7 @@ export function Screen4Context({ answers, update, errors }: Props) {
       </section>
 
       {/* Q9 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">
           Who is this for?
         </h2>
@@ -76,7 +76,7 @@ export function Screen4Context({ answers, update, errors }: Props) {
                 update({ purpose_other_text: e.target.value })
               }
               placeholder="Tell us more"
-              className="focus-ring w-full rounded-lg border border-line bg-canvas-raised px-3.5 py-2.5 text-[15px] placeholder:text-ink-faint/70"
+              className="focus-ring w-full rounded-xl border border-line bg-canvas-raised px-3.5 py-3 text-[15px] shadow-sm placeholder:text-ink-faint/70"
             />
             {errors.purpose_other_text && (
               <p className="mt-2 text-sm text-red-700">
@@ -92,7 +92,7 @@ export function Screen4Context({ answers, update, errors }: Props) {
 
       {/* Q10 - conditional */}
       {showUsage && (
-        <section>
+        <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
           <h2 className="mb-1 font-serif text-[22px] text-ink">
             How will you use it?
           </h2>
@@ -116,7 +116,7 @@ export function Screen4Context({ answers, update, errors }: Props) {
       )}
 
       {/* Q11 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">
           When are you planning to buy?
         </h2>
@@ -137,7 +137,7 @@ export function Screen4Context({ answers, update, errors }: Props) {
       </section>
 
       {/* Q12 - optional */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <div className="mb-1 flex items-baseline justify-between">
           <h2 className="font-serif text-[22px] text-ink">
             How are you planning to pay?

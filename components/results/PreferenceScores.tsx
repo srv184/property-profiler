@@ -17,19 +17,19 @@ const AXES: { key: keyof BuyerDNA; label: string; hint: string }[] = [
 
 export function PreferenceScores({ dna }: Props) {
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {AXES.map(({ key, label, hint }) => (
         <div
           key={key}
-          className="rounded-xl border border-line bg-canvas-raised px-4 py-4"
+          className="rounded-xl border border-line bg-canvas-raised px-4 py-4 shadow-sm"
         >
           <div className="mb-2 flex items-baseline justify-between">
             <span className="text-[13px] font-medium text-ink">{label}</span>
-            <span className="font-serif text-lg text-accent-deep tabular-nums">
+            <span className="font-serif text-xl font-semibold text-accent-deep tabular-nums">
               {dna[key]}
             </span>
           </div>
-          <div className="mb-1.5 h-1 overflow-hidden rounded-full bg-line-soft">
+          <div className="mb-1.5 h-1.5 overflow-hidden rounded-full bg-line-soft">
             <div
               className="h-full rounded-full bg-accent transition-all duration-700 ease-out"
               style={{ width: `${dna[key]}%` }}

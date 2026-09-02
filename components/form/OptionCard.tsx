@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 
 interface OptionCardProps {
   label: string;
@@ -26,16 +26,16 @@ export function OptionCard({
       aria-checked={selected}
       disabled={disabled}
       onClick={onSelect}
-      className={`focus-ring group relative flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-150 ${
+      className={`focus-ring group relative flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-3.5 text-left shadow-sm transition-all duration-200 ${
         selected
-          ? "border-accent bg-accent/[0.06] shadow-card"
-          : "border-line bg-canvas-raised hover:border-ink/20 hover:bg-canvas-sunken/40"
+          ? "border-2 border-accent bg-orange-50/50 px-[15px] py-[13px] shadow-card"
+          : "border-line bg-canvas-raised hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-card"
       } ${disabled ? "cursor-not-allowed opacity-40" : "cursor-pointer"}`}
     >
       <span className="flex flex-col">
         <span
           className={`text-[15px] leading-snug ${
-            selected ? "font-medium text-ink" : "text-ink/85"
+            selected ? "font-semibold text-ink" : "font-medium text-ink"
           }`}
         >
           {label}
@@ -52,10 +52,10 @@ export function OptionCard({
         } ${
           selected
             ? "border-accent bg-accent text-white"
-            : "border-line bg-transparent"
+            : "border-line bg-canvas-sunken text-ink-faint group-hover:border-accent/50 group-hover:text-accent"
         }`}
       >
-        {selected && <Check size={13} strokeWidth={3} />}
+        {selected ? <Check size={13} strokeWidth={3} /> : <Plus size={13} strokeWidth={2.5} />}
       </span>
     </button>
   );

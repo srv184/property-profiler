@@ -10,9 +10,9 @@ export function ProgressIndicator({
   label,
 }: ProgressIndicatorProps) {
   return (
-    <div className="mb-8">
-      <div className="mb-2.5 flex items-baseline justify-between">
-        <span className="text-xs font-medium uppercase tracking-[0.14em] text-ink-faint">
+    <div className="mb-9 rounded-xl border border-line bg-canvas-raised p-4 shadow-sm">
+      <div className="mb-3 flex items-baseline justify-between">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-faint">
           {label}
         </span>
         <span className="text-xs font-medium tabular-nums text-ink-faint">
@@ -29,10 +29,10 @@ export function ProgressIndicator({
         {Array.from({ length: total }).map((_, i) => (
           <div
             key={i}
-            className={`h-[3px] flex-1 overflow-hidden rounded-full bg-line-soft`}
+            className={`h-1.5 flex-1 overflow-hidden rounded-full bg-line-soft`}
           >
             <div
-              className={`h-full rounded-full bg-accent transition-all duration-500 ease-out`}
+              className={`h-full rounded-full bg-accent shadow-[0_0_8px_rgba(252,128,25,0.35)] transition-all duration-500 ease-out`}
               style={{ width: i < current ? "100%" : "0%" }}
             />
           </div>

@@ -88,9 +88,9 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
   };
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       {/* Q1 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">
           What are you looking to do?
         </h2>
@@ -113,7 +113,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
       </section>
 
       {/* Q2 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">Your buyer status</h2>
         <p className="mb-5 text-sm text-ink-faint">
           This helps frame relevant considerations later.
@@ -134,7 +134,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
       </section>
 
       {/* Q3 */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">
           Where would you like to be?
         </h2>
@@ -149,7 +149,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
             {answers.locations.map((loc) => (
               <span
                 key={loc}
-                className="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas-sunken py-1.5 pl-3 pr-2 text-sm text-ink"
+                className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-orange-50/50 py-1.5 pl-3 pr-2 text-sm font-medium text-ink"
               >
                 {loc}
                 <button
@@ -184,7 +184,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
 
       {/* Q4 - dynamic */}
       {answers.intent && (
-        <section>
+        <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
           <h2 className="mb-1 font-serif text-[22px] text-ink">
             {Q4_HEADINGS[answers.intent]}
           </h2>
@@ -208,7 +208,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
       )}
 
       {/* Q5 - budget */}
-      <section>
+      <section className="rounded-xl border border-line bg-canvas-raised p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 font-serif text-[22px] text-ink">Budget</h2>
         <p className="mb-5 text-sm text-ink-faint">
           All figures in Indian Rupees (INR).
@@ -232,7 +232,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
                 disabled={answers.budget.not_sure}
                 onChange={(e) => updateMinimum(parseInrInput(e.target.value))}
                 placeholder="1,50,00,000"
-                className="focus-ring w-full rounded-lg border border-line bg-canvas-raised py-2.5 pl-7 pr-3.5 text-[15px] tabular-nums placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
+                className="focus-ring w-full rounded-xl border border-line bg-canvas-raised py-3 pl-7 pr-3.5 text-[15px] tabular-nums shadow-sm placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
               />
             </div>
           </div>
@@ -251,7 +251,7 @@ export function Screen1IntentProperty({ answers, update, errors }: Props) {
                 disabled={answers.budget.not_sure}
                 onChange={(e) => updateMaximum(parseInrInput(e.target.value))}
                 placeholder="2,50,00,000"
-                className="focus-ring w-full rounded-lg border border-line bg-canvas-raised py-2.5 pl-7 pr-3.5 text-[15px] tabular-nums placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
+                className="focus-ring w-full rounded-xl border border-line bg-canvas-raised py-3 pl-7 pr-3.5 text-[15px] tabular-nums shadow-sm placeholder:text-ink-faint/60 disabled:cursor-not-allowed disabled:opacity-40"
               />
             </div>
           </div>
